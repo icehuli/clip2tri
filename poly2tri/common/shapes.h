@@ -137,6 +137,7 @@ struct Edge {
       } else if (p1.x == p2.x) {
         // Repeat points
         assert(false);
+		throw("IHL_Clip2Tri_Exception->Edge::Edge");
       }
     }
 

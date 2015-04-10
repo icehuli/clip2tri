@@ -10,6 +10,8 @@
 #include "../poly2tri/poly2tri.h"
 
 #include <cstdio>
+#include <map>
+#include <iostream>
 
 
 using namespace p2t;
@@ -18,8 +20,8 @@ namespace c2t
 {
 
 
-static const F32 CLIPPER_SCALE_FACT = 1000.0f;
-static const F32 CLIPPER_SCALE_FACT_INVERSE = 0.001f;
+	static const F32 CLIPPER_SCALE_FACT = 1000000.0; //2^31 = 2147483648
+	static const F32 CLIPPER_SCALE_FACT_INVERSE = 0.000001;
 
 
 /////////////////////////////////
@@ -189,7 +191,9 @@ bool clip2tri::triangulateComplex(vector<Point> &outputTriangles, const Path &ou
    // Keep track of memory for all the poly2tri objects we create
    vector<p2t::CDT*> cdtRegistry;
    vector<vector<p2t::Point*> > holesRegistry;
-   vector<vector<p2t::Point*> > polylinesRegistry;
+   vector<vector<p2t::Point*> > polylinesRegistry; 
+
+   //std::map<IntPoint, p2t::Point*> unique_points;
 
 
    // Let's be tricky and add our outline to the root node (it should have none), it'll be
@@ -215,8 +219,20 @@ bool clip2tri::triangulateComplex(vector<Point> &outputTriangles, const Path &ou
       {
          // Build up this polyline in poly2tri's format (downscale Clipper points)
          vector<p2t::Point*> polyline;
-         for(U32 j = 0; j < currentNode->Contour.size(); j++)
-            polyline.push_back(new p2t::Point(F64(currentNode->Contour[j].X), F64(currentNode->Contour[j].Y)));
+		 for (U32 j = 0; j < currentNode->Contour.size(); j++)
+		 {
+			 //TPointMap::iterator iter(unique_points.find(currentNode->Contour[j]));
+			 //if (iter == unique_points.end()) {    // not found
+				// p2t::Point* pt = new p2t::Point(F64(currentNode->Contour[j].X), F64(currentNode->Contour[j].Y));
+				// unique_points.insert(make_pair(currentNode->Contour[j], pt));     // hinted insertion
+				// polyline.push_back(pt);
+			 //}
+			 //else {
+				// polyline.push_back(iter->second);
+			 //}
+			 p2t::Point* pt = new p2t::Point(F64(currentNode->Contour[j].X), F64(currentNode->Contour[j].Y));
+			 polyline.push_back(pt);
+		 }
 
          polylinesRegistry.push_back(polyline);  // Memory
 
@@ -232,14 +248,30 @@ bool clip2tri::triangulateComplex(vector<Point> &outputTriangles, const Path &ou
             edgeShrink(childNode->Contour);
 
             vector<p2t::Point*> hole;
-            for(U32 k = 0; k < childNode->Contour.size(); k++)
-               hole.push_back(new p2t::Point(F64(childNode->Contour[k].X), F64(childNode->Contour[k].Y)));
+			for (U32 k = 0; k < childNode->Contour.size(); k++)
+			{
+
+				//TPointMap::iterator iter(unique_points.lower_bound(currentNode->Contour[k]));
+				//if (iter == unique_points.end()) {    // not found
+				//	p2t::Point* pt = new p2t::Point(F64(currentNode->Contour[k].X), F64(currentNode->Contour[k].Y));
+				//	unique_points.insert(iter, make_pair(currentNode->Contour[j], pt));     // hinted insertion
+				//	hole.push_back(pt);
+				//}
+				//else {
+				//	//polyline.push_back(iter->second);
+				//	//hole.push_back(new p2t::Point(F64(childNode->Contour[k].X), F64(childNode->Contour[k].Y)));
+				//	hole.push_back(iter->second);
+				//}
+				p2t::Point* pt = new p2t::Point(F64(currentNode->Contour[k].X), F64(currentNode->Contour[k].Y));
+				hole.push_back(pt);
+			}
 
             holesRegistry.push_back(hole);  // Memory
 
             // Add the holes for this polyline
             cdt->AddHole(hole);
          }
+
 
          cdt->Triangulate();
 

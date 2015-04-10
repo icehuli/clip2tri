@@ -63,6 +63,10 @@ void Sweep::FinalizationPolygon(SweepContext& tcx)
   // Get an Internal triangle to start with
   Triangle* t = tcx.front()->head()->next->triangle;
   Point* p = tcx.front()->head()->next->point;
+  if (t == NULL || p == NULL)
+  {
+	  throw("IHL_Clip2Tri_Exception->Sweep::FinalizationPolygon");
+  }
   while (!t->GetConstrainedEdgeCW(*p)) {
     t = t->NeighborCCW(*p);
   }
@@ -121,8 +125,9 @@ void Sweep::EdgeEvent(SweepContext& tcx, Point& ep, Point& eq, Triangle* triangl
       triangle = &triangle->NeighborAcross(point);
       EdgeEvent( tcx, ep, *p1, triangle, *p1 );
     } else {
-      std::runtime_error("EdgeEvent - collinear points not supported");
-      assert(0);
+      //std::runtime_error("EdgeEvent - collinear points not supported");
+	  assert(0);
+	  throw("IHL_Clip2Tri_Exception->Sweep::EdgeEvent - collinear points not supported");
     }
     return;
   }
@@ -138,8 +143,9 @@ void Sweep::EdgeEvent(SweepContext& tcx, Point& ep, Point& eq, Triangle* triangl
       triangle = &triangle->NeighborAcross(point);
       EdgeEvent( tcx, ep, *p2, triangle, *p2 );
     } else {
-      std::runtime_error("EdgeEvent - collinear points not supported");
-      assert(0);
+      //std::runtime_error("EdgeEvent - collinear points not supported");
+	  assert(0);
+	  throw("IHL_Clip2Tri_Exception->Sweep::EdgeEvent - collinear points not supported");
     }
     return;
   }
@@ -176,45 +182,59 @@ bool Sweep::IsEdgeSideOfTriangle(Triangle& triangle, Point& ep, Point& eq)
 
 Node& Sweep::NewFrontTriangle(SweepContext& tcx, Point& point, Node& node)
 {
-  Triangle* triangle = new Triangle(point, *node.point, *node.next->point);
+	try
+	{
+		Triangle* triangle = new Triangle(point, *node.point, *node.next->point);
 
-  triangle->MarkNeighbor(*node.triangle);
-  tcx.AddToMap(triangle);
+		triangle->MarkNeighbor(*node.triangle);
+		tcx.AddToMap(triangle);
 
-  Node* new_node = new Node(point);
-  nodes_.push_back(new_node);
+		Node* new_node = new Node(point);
+		nodes_.push_back(new_node);
 
-  new_node->next = node.next;
-  new_node->prev = &node;
-  node.next->prev = new_node;
-  node.next = new_node;
+		new_node->next = node.next;
+		new_node->prev = &node;
+		node.next->prev = new_node;
+		node.next = new_node;
 
-  if (!Legalize(tcx, *triangle)) {
-    tcx.MapTriangleToNodes(*triangle);
-  }
+		if (!Legalize(tcx, *triangle)) {
+			tcx.MapTriangleToNodes(*triangle);
+		}
 
-  return *new_node;
+		return *new_node;
+	}
+	catch (...)
+	{
+		throw("IHL_Clip2Tri_Exception->Sweep::NewFrontTriangle");
+	}
 }
 
 void Sweep::Fill(SweepContext& tcx, Node& node)
 {
-  Triangle* triangle = new Triangle(*node.prev->point, *node.point, *node.next->point);
+	try
+	{
+		Triangle* triangle = new Triangle(*node.prev->point, *node.point, *node.next->point);
 
-  // TODO: should copy the constrained_edge value from neighbor triangles
-  //       for now constrained_edge values are copied during the legalize
-  triangle->MarkNeighbor(*node.prev->triangle);
-  triangle->MarkNeighbor(*node.triangle);
+		// TODO: should copy the constrained_edge value from neighbor triangles
+		//       for now constrained_edge values are copied during the legalize
+		triangle->MarkNeighbor(*node.prev->triangle);
+		triangle->MarkNeighbor(*node.triangle);
 
-  tcx.AddToMap(triangle);
+		tcx.AddToMap(triangle);
 
-  // Update the advancing front
-  node.prev->next = node.next;
-  node.next->prev = node.prev;
+		// Update the advancing front
+		node.prev->next = node.next;
+		node.next->prev = node.prev;
 
-  // If it was legalized the triangle has already been mapped
-  if (!Legalize(tcx, *triangle)) {
-    tcx.MapTriangleToNodes(*triangle);
-  }
+		// If it was legalized the triangle has already been mapped
+		if (!Legalize(tcx, *triangle)) {
+			tcx.MapTriangleToNodes(*triangle);
+		}
+	}
+	catch (...)
+	{
+		throw("IHL_Clip2Tri_Exception->Sweep::Fill");
+	}
 
 }
 
@@ -222,7 +242,11 @@ void Sweep::FillAdvancingFront(SweepContext& tcx, Node& n)
 {
 
   // Fill right holes
-  Node* node = n.next;
+	Node* node = n.next;
+	if (node == NULL)
+	{
+		throw("IHL_Clip2Tri_Exception->Sweep::LargeHole_DontFill: nextNode == NULL");
+	}
 
   while (node->next) {
     // if HoleAngle exceeds 90 degrees then break.
@@ -255,6 +279,14 @@ bool Sweep::LargeHole_DontFill(Node* node) {
   
   Node* nextNode = node->next;
   Node* prevNode = node->prev;
+  if (nextNode == NULL)
+  {
+	  throw("IHL_Clip2Tri_Exception->Sweep::LargeHole_DontFill: nextNode == NULL");
+  }
+  if (prevNode == NULL)
+  {
+	  throw("IHL_Clip2Tri_Exception->Sweep::LargeHole_DontFill: prevNode == NULL");
+  }
   if (!AngleExceeds90Degrees(node->point, nextNode->point, prevNode->point))
           return false;
 
@@ -700,14 +732,16 @@ void Sweep::FillLeftConcaveEdgeEvent(SweepContext& tcx, Edge* edge, Node& node)
 void Sweep::FlipEdgeEvent(SweepContext& tcx, Point& ep, Point& eq, Triangle* t, Point& p)
 {
   Triangle& ot = t->NeighborAcross(p);
-  Point& op = *ot.OppositePoint(*t, p);
 
   if (&ot == NULL) {
     // If we want to integrate the fillEdgeEvent do it here
     // With current implementation we should never get here
     //throw new RuntimeException( "[BUG:FIXME] FLIP failed due to missing triangle");
-    assert(0);
+	  assert(0);
+	  throw("IHL_Clip2Tri_Exception->Sweep::FlipEdgeEvent");
   }
+
+  Point& op = *ot.OppositePoint(*t, p);
 
   if (InScanArea(p, *t->PointCCW(p), *t->PointCW(p), op)) {
     // Lets rotate shared edge one vertex CW
@@ -767,7 +801,8 @@ Point& Sweep::NextFlipPoint(Point& ep, Point& eq, Triangle& ot, Point& op)
     return *ot.PointCW(op);
   } else{
     //throw new RuntimeException("[Unsupported] Opposing point on constrained edge");
-    assert(0);
+	  assert(0);
+	  throw("IHL_Clip2Tri_Exception->Sweep::NextFlipPoint");
     return ep;     // Arbitrary return val -- fixes warning
   }
 }
@@ -776,15 +811,16 @@ void Sweep::FlipScanEdgeEvent(SweepContext& tcx, Point& ep, Point& eq, Triangle&
                               Triangle& t, Point& p)
 {
   Triangle& ot = t.NeighborAcross(p);
-  Point& op = *ot.OppositePoint(t, p);
 
   if (&t.NeighborAcross(p) == NULL) {
     // If we want to integrate the fillEdgeEvent do it here
     // With current implementation we should never get here
     //throw new RuntimeException( "[BUG:FIXME] FLIP failed due to missing triangle");
-    assert(0);
+	  assert(0);
+	  throw("IHL_Clip2Tri_Exception->Sweep::FlipScanEdgeEvent");
   }
 
+  Point& op = *ot.OppositePoint(t, p);
   if (InScanArea(eq, *flip_triangle.PointCCW(eq), *flip_triangle.PointCW(eq), op)) {
     // flip with new edge op->eq
     FlipEdgeEvent(tcx, eq, op, &ot, op);

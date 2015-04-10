@@ -52,7 +52,10 @@ void Triangle::MarkNeighbor(Point* p1, Point* p2, Triangle* t)
   else if ((p1 == points_[0] && p2 == points_[1]) || (p1 == points_[1] && p2 == points_[0]))
     neighbors_[2] = t;
   else
-    assert(0);
+  {
+	  assert(0);
+	  throw("IHL_Clip2Tri_Exception->Triangle::MarkNeighbor");
+  }
 }
 
 // Exhaustive search to update neighbor pointers
@@ -150,7 +153,8 @@ void Triangle::Legalize(Point& opoint, Point& npoint)
     points_[2] = points_[1];
     points_[1] = &npoint;
   } else {
-    assert(0);
+	  assert(0);
+	  throw("IHL_Clip2Tri_Exception->Triangle::Legalize");
   }
 }
 
@@ -164,6 +168,7 @@ int Triangle::Index(const Point* p)
     return 2;
   }
   assert(0);
+  throw("IHL_Clip2Tri_Exception->Triangle::Index");
   return 0;
 }
 
@@ -224,6 +229,7 @@ Point* Triangle::PointCW(Point& point)
     return points_[1];
   }
   assert(0);
+  throw("IHL_Clip2Tri_Exception->Triangle::PointCW");
   return NULL;
 }
 
@@ -238,6 +244,7 @@ Point* Triangle::PointCCW(Point& point)
     return points_[0];
   }
   assert(0);
+  throw("IHL_Clip2Tri_Exception->Triangle::PointCCW");
   return NULL;
 }
 

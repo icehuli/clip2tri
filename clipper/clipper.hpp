@@ -48,7 +48,7 @@
   
 //use_deprecated: Enables support for the obsolete OffsetPaths() function
 //which has been replace with the ClipperOffset class.
-#define use_deprecated  
+//#define use_deprecated  
 
 #include <vector>
 #include <set>
@@ -86,15 +86,24 @@ struct IntPoint {
   IntPoint(cInt x = 0, cInt y = 0): X(x), Y(y) {};
 #endif
 
-  friend inline bool operator== (const IntPoint& a, const IntPoint& b)
+};
+
+  inline bool operator== (const IntPoint& a, const IntPoint& b)
   {
     return a.X == b.X && a.Y == b.Y;
   }
-  friend inline bool operator!= (const IntPoint& a, const IntPoint& b)
+  inline bool operator!= (const IntPoint& a, const IntPoint& b)
   {
-    return a.X != b.X  || a.Y != b.Y; 
+    return (a.X != b.X  || a.Y != b.Y); 
   }
-};
+  inline bool operator< (const IntPoint& a, const IntPoint& b)
+  {
+	  return ((a.X < b.X) || (a.X == b.X && a.Y < b.Y));
+  }
+  //inline bool operator<(keyInfo const& left, keyInfo const& right) {
+	 // return boost::tie(boost::cref(left.Key1), boost::cref(left.Key2))
+		//  < boost::tie(boost::cref(right.Key1), boost::cref(right.Key2));
+  //}
 //------------------------------------------------------------------------------
 
 typedef std::vector< IntPoint > Path;
