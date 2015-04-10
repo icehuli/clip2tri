@@ -193,9 +193,6 @@ bool clip2tri::triangulateComplex(vector<Point> &outputTriangles, const Path &ou
    vector<vector<p2t::Point*> > holesRegistry;
    vector<vector<p2t::Point*> > polylinesRegistry; 
 
-   //std::map<IntPoint, p2t::Point*> unique_points;
-
-
    // Let's be tricky and add our outline to the root node (it should have none), it'll be
    // our first Clipper hole
    PolyNode *rootNode = NULL;
@@ -221,15 +218,6 @@ bool clip2tri::triangulateComplex(vector<Point> &outputTriangles, const Path &ou
          vector<p2t::Point*> polyline;
 		 for (U32 j = 0; j < currentNode->Contour.size(); j++)
 		 {
-			 //TPointMap::iterator iter(unique_points.find(currentNode->Contour[j]));
-			 //if (iter == unique_points.end()) {    // not found
-				// p2t::Point* pt = new p2t::Point(F64(currentNode->Contour[j].X), F64(currentNode->Contour[j].Y));
-				// unique_points.insert(make_pair(currentNode->Contour[j], pt));     // hinted insertion
-				// polyline.push_back(pt);
-			 //}
-			 //else {
-				// polyline.push_back(iter->second);
-			 //}
 			 p2t::Point* pt = new p2t::Point(F64(currentNode->Contour[j].X), F64(currentNode->Contour[j].Y));
 			 polyline.push_back(pt);
 		 }
@@ -250,18 +238,6 @@ bool clip2tri::triangulateComplex(vector<Point> &outputTriangles, const Path &ou
             vector<p2t::Point*> hole;
 			for (U32 k = 0; k < childNode->Contour.size(); k++)
 			{
-
-				//TPointMap::iterator iter(unique_points.lower_bound(currentNode->Contour[k]));
-				//if (iter == unique_points.end()) {    // not found
-				//	p2t::Point* pt = new p2t::Point(F64(currentNode->Contour[k].X), F64(currentNode->Contour[k].Y));
-				//	unique_points.insert(iter, make_pair(currentNode->Contour[j], pt));     // hinted insertion
-				//	hole.push_back(pt);
-				//}
-				//else {
-				//	//polyline.push_back(iter->second);
-				//	//hole.push_back(new p2t::Point(F64(childNode->Contour[k].X), F64(childNode->Contour[k].Y)));
-				//	hole.push_back(iter->second);
-				//}
 				p2t::Point* pt = new p2t::Point(F64(currentNode->Contour[k].X), F64(currentNode->Contour[k].Y));
 				hole.push_back(pt);
 			}
