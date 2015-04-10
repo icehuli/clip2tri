@@ -1,5 +1,3 @@
-
-
 #include "RubyUtils/RubyUtils.h"
 
 #include "../clipper/clipper.hpp"
@@ -11,15 +9,12 @@ using namespace std;
 using namespace c2t;
 
 
-
-// TODO actually fill out some test data...  this code compiles, but doesn't work!
-
 namespace IHL_Clip2Tri
 {
 
-	static ID IDx = rb_intern("x");// = rb_intern("x");
-	static ID IDy = rb_intern("y");// = rb_intern("y");
-	static ID IDz = rb_intern("z");// = rb_intern("z");
+	static ID IDx = rb_intern("x");
+	static ID IDy = rb_intern("y");
+	static ID IDz = rb_intern("z");
 
 	VALUE pt_x(VALUE pt)
 	{
@@ -69,18 +64,8 @@ namespace IHL_Clip2Tri
 	};
 
 	VALUE clip2tri_triangulate(VALUE klass, VALUE polygon, VALUE holes) {
-		//return GetRubyInterface("Hello World!");
 
 		VALUE rb_triangles = Qnil;
-		//vector<vector<Point> > inputPolygons;
-		////{ { Point(0,0), Point(10,0), Point(10,10), Point(0,10) } };
-		//vector<Point> outputTriangles;  // Every 3 points is a triangle
-
-		//vector<Point> boundingPolygon = { Point(-1, -1), Point(11, -1), Point(11, 11), Point(-1, 11) };
-
-		//clip2tri clip2tri;
-		//clip2tri.triangulate(inputPolygons, outputTriangles, boundingPolygon);
-
 		try
 		{
 
@@ -97,7 +82,6 @@ namespace IHL_Clip2Tri
 				return Qnil;
 			}
 
-			//rb_funcall(rb_mKernel, rb_intern("puts"), 1, polygon);
 			boundingPolygon.resize(npolygon_pts);
 			VALUE* polygon_ptsptr = RARRAY_PTR(polygon);
 			for (int j = 0; j < npolygon_pts; j++)
@@ -145,7 +129,6 @@ namespace IHL_Clip2Tri
 
 
 			vector<Point> outputTriangles;  // Every 3 points is a triangle
-			//vector<Point> boundingPolygon = { Point(-1, -1), Point(11, -1), Point(11, 11), Point(-1, 11) };
 			clip2tri clip2tri;
 			clip2tri.triangulate(holePolygons, outputTriangles, boundingPolygon);
 
@@ -168,13 +151,12 @@ namespace IHL_Clip2Tri
 
 		}
 
-
 		return rb_triangles;
 	}
 }
 
 // Load this module from Ruby using:
-//   require 'SUEX_HelloWorld'
+//   require 'IHL_Clip2Tri'
 #include <new.h>
 extern "C"
 void Init_IHL_Clip2Tri()
