@@ -1,0 +1,4 @@
+LIBRARY
+
+EXPORTS
+    Init_IHL_Clip2Tri
