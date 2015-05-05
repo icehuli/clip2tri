@@ -101,6 +101,9 @@
     <Lib>
       <AdditionalDependencies>msvcrt-ruby200.lib;</AdditionalDependencies>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy /y "$(SolutionDir)$(Configuration)\$(ProjectName).so" "C:\Users\icehuli\AppData\Roaming\SketchUp\SketchUp 2015\SketchUp\Plugins\ihl_profile\lib\win32\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -122,6 +125,9 @@
     <Lib>
       <AdditionalDependencies>msvcrt-ruby200.lib;</AdditionalDependencies>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy /y "$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName).so" "C:\Users\icehuli\AppData\Roaming\SketchUp\SketchUp 2015\SketchUp\Plugins\ihl_profile\lib\win32_x64\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -147,6 +153,9 @@
     <Lib>
       <AdditionalDependencies>msvcrt-ruby200.lib;</AdditionalDependencies>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy /y "$(SolutionDir)$(Configuration)\$(ProjectName).so" "C:\Users\icehuli\AppData\Roaming\SketchUp\SketchUp 2015\SketchUp\Plugins\ihl_profile\lib\win32\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -172,6 +181,9 @@
     <Lib>
       <AdditionalDependencies>msvcrt-ruby200.lib;</AdditionalDependencies>
     </Lib>
+    <PostBuildEvent>
+      <Command>copy /y "$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName).so" "C:\Users\icehuli\AppData\Roaming\SketchUp\SketchUp 2015\SketchUp\Plugins\ihl_profile\lib\win32_x64\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
