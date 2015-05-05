@@ -55,14 +55,25 @@ clip2tri::~clip2tri()
 void clip2tri::triangulate(const vector<vector<Point> > inputPolygons, vector<Point> &outputTriangles,
       const vector<Point> boundingPolygon)
 {
-   // Use clipper to clean.  This upscales the floating point input
-   PolyTree solution;
-   mergePolysToPolyTree(inputPolygons, solution);
+    try
+    {
+        // Use clipper to clean.  This upscales the floating point input
+        PolyTree solution;
+        mergePolysToPolyTree(inputPolygons, solution);
 
-   Path bounds = upscaleClipperPoints(boundingPolygon);
+        Path bounds = upscaleClipperPoints(boundingPolygon);
 
-   // This will downscale the Clipper output and use poly2tri to triangulate
-   triangulateComplex(outputTriangles, bounds, solution);
+        // This will downscale the Clipper output and use poly2tri to triangulate
+        triangulateComplex(outputTriangles, bounds, solution);
+    } 
+    catch (const char* e)
+    {
+        throw(e);
+    } 
+    catch (...)
+    {
+        throw("IHL_Clip2Tri_Exception->triangulate, unspecified error!");
+    }
 }
 
 

@@ -110,6 +110,9 @@ void Sweep::EdgeEvent(SweepContext& tcx, Edge* edge, Node* node)
 
 void Sweep::EdgeEvent(SweepContext& tcx, Point& ep, Point& eq, Triangle* triangle, Point& point)
 {
+  if (triangle == nullptr)
+        throw("IHL_Clip2Tri_Exception->Sweep::EdgeEvent - triangle == nullptr");
+
   if (IsEdgeSideOfTriangle(*triangle, ep, eq)) {
     return;
   }
